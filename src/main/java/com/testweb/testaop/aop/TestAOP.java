@@ -46,22 +46,25 @@ public class TestAOP {
 	 */
 	@Around(value="controllerSuffix() && bindingResultArgs()")
 	public Object checkBindingResult(ProceedingJoinPoint pJoinPoint) throws Throwable{
+		Map<String, String> errMsg = new LinkedHashMap<>();
+		boolean hasErr = false;
+		
 		for(Object arg : pJoinPoint.getArgs()){
 			if(!(arg instanceof BindingResult)){
 				continue;
 			}
 			BindingResult br = (BindingResult) arg;
 			if(br.hasErrors()){
-				Map<String, String> errMsg = new LinkedHashMap<>();
+				hasErr = true;
 				List<FieldError> fieldErrors = br.getFieldErrors();
 				for(FieldError fieldError:fieldErrors){
 					errMsg.put(fieldError.getField(), fieldError.getDefaultMessage());
 				}
-				//此处有一个BindingResult出现错误就返回，不再收集下一个BindingResult的错误
-				return new JsonResult(ResultCode.PARAM_INVALID, errMsg);
 			}
 		}
-		
+		if(hasErr){
+			return new JsonResult(ResultCode.PARAM_INVALID, errMsg);
+		}
 		Object result = pJoinPoint.proceed();
 		return result;
 	}

@@ -3,9 +3,11 @@ package com.testweb.testaop.param;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class TestParam {
-	@NotBlank(message = "prop1 不能为空")
+	@NotBlank(groups = {Add.class})
 	private String prop1;
-	@NotBlank(message = "prop2 不能为空")
+	
+	
+	@NotBlank(groups = {Edit.class})
 	private String prop2;
 	
 	public String getProp1() {

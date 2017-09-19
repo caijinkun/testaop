@@ -1,12 +1,13 @@
 package com.testweb.testaop.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.testweb.testaop.dto.JsonResult;
+import com.testweb.testaop.param.Add;
+import com.testweb.testaop.param.Edit;
 import com.testweb.testaop.param.Test2Param;
 import com.testweb.testaop.param.TestParam;
 
@@ -26,7 +27,8 @@ public class TestController {
 	 * 此处使用{@link com.testweb.testaop.aop.TestAOP}做通用处理
 	 */
 	@RequestMapping("/test1")
-	public JsonResult test1(@Valid TestParam param, BindingResult br){
+	public JsonResult test1(@Validated(Add.class) TestParam param, BindingResult br){
+
 		return JsonResult.success("test1通过校验");
 	}
 	/**
@@ -35,7 +37,8 @@ public class TestController {
 	 * 2、多个@Valid需要对应多个BindingResult
 	 */
 	@RequestMapping("/test2")
-	public JsonResult test2(@Valid TestParam param, BindingResult br, @Valid Test2Param param2, BindingResult br2){
+	public JsonResult test2(@Validated({ Add.class, Edit.class }) TestParam param, BindingResult br,
+			@Validated Test2Param param2, BindingResult br2) {
 		return JsonResult.success("test2通过校验");
 	}
 }
